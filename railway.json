@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  eaterplanet-web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - uploads_data:/var/www/html/Uploads
+      - runtime_data:/var/www/html/Runtime
+    depends_on:
+      - eaterplanet-db
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=80
+    restart: always
+
+  eaterplanet-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: eaterplanet_root_123
+      MYSQL_DATABASE: eaterplanet
+      MYSQL_USER: eaterplanet
+      MYSQL_PASSWORD: eaterplanet_123
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+
+volumes:
+  mysql_data:
+  uploads_data:
+  runtime_data:
