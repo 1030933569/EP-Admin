@@ -1,0 +1,43 @@
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Uploads:/var/www/html/Uploads
+      - ./Runtime:/var/www/html/Runtime
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=eaterplanet
+      - MYSQL_USERNAME=eaterplanet
+      - MYSQL_PASSWORD=eaterplanet_123
+      - MYSQL_PORT=3306
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root_123456
+      MYSQL_DATABASE: eaterplanet
+      MYSQL_USER: eaterplanet
+      MYSQL_PASSWORD: eaterplanet_123
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

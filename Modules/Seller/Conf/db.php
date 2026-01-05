@@ -7,5 +7,9 @@ return array(
     'DB_PWD' => getenv('MYSQL_PASSWORD') ?: getenv('DATABASE_PASSWORD') ?: '',  // 密码
     'DB_PORT' => getenv('MYSQL_PORT') ?: getenv('DATABASE_PORT') ?: '3306', // 端口
     'DB_PREFIX' => getenv('DB_PREFIX') ?: '', // 数据库表前缀
+    'DB_PARAMS' => array(
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
+    ),
 );
 ?>
