@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 # 启用 Apache 重写模块
 RUN a2enmod rewrite
 
-# 配置 Apache 允许 .htaccess
+# 配置 Apache 允许 .htaccess 和设置 DocumentRoot
 RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # 配置 Apache 监听 8080 端口（Zeabur 默认端口）
@@ -28,6 +28,23 @@ WORKDIR /var/www/html
 
 # 复制代码
 COPY . /var/www/html/
+
+# 创建 .htaccess 文件（支持 ThinkPHP 路由）
+RUN echo '<IfModule mod_rewrite.c>' > /var/www/html/.htaccess \
+    && echo '  Options +FollowSymlinks -Multiviews' >> /var/www/html/.htaccess \
+    && echo '  RewriteEngine On' >> /var/www/html/.htaccess \
+    && echo '' >> /var/www/html/.htaccess \
+    && echo '  RewriteCond %{REQUEST_FILENAME} !-d' >> /var/www/html/.htaccess \
+    && echo '  RewriteCond %{REQUEST_FILENAME} !-f' >> /var/www/html/.htaccess \
+    && echo '  RewriteRule ^(.*)$ index.php/$1 [QSA,PT,L]' >> /var/www/html/.htaccess \
+    && echo '</IfModule>' >> /var/www/html/.htaccess
+
+# 创建必要的目录
+RUN mkdir -p /var/www/html/Runtime/Cache \
+    && mkdir -p /var/www/html/Runtime/Logs \
+    && mkdir -p /var/www/html/Runtime/Temp \
+    && mkdir -p /var/www/html/Runtime/Data \
+    && mkdir -p /var/www/html/Uploads/image
 
 # 设置权限
 RUN chown -R www-data:www-data /var/www/html \

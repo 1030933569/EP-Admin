@@ -1,0 +1,26 @@
+{
+  "$schema": "https://zeabur.com/schema.json",
+  "build": {
+    "type": "dockerfile"
+  },
+  "start": {
+    "command": "apache2-foreground"
+  },
+  "ports": [
+    {
+      "id": "web",
+      "port": 8080,
+      "type": "HTTP"
+    }
+  ],
+  "env": {
+    "TZ": {
+      "default": "Asia/Shanghai",
+      "expose": true
+    },
+    "PORT": {
+      "default": "8080",
+      "expose": false
+    }
+  }
+}
