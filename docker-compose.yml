@@ -14,6 +14,10 @@ services:
       - MYSQL_USERNAME=eaterplanet
       - MYSQL_PASSWORD=eaterplanet_123
       - MYSQL_PORT=3306
+      - DB_PREFIX=dejavutech_
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     depends_on:
       db:
         condition: service_healthy
@@ -31,7 +35,7 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode="ALLOW_INVALID_DATES,NO_ENGINE_SUBSTITUTION"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
